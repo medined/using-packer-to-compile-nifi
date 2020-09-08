@@ -1,4 +1,4 @@
-# Using Packer and Terraform To Create AMI With S3FS Installed
+# Using Packer and Terraform To Create AMI With Apache NiFi Installed
 
 Using packer and terraform to install s3fs on an Amazon Image (AMI)
 
@@ -7,6 +7,8 @@ Using packer and terraform to install s3fs on an Amazon Image (AMI)
 * HashiCorp **Terraform** (https://www.terraform.io/) uses Infrastructure as Code to provision and manage any cloud, infrastructure, or service.
 
 * **s3fs** (https://github.com/s3fs-fuse/s3fs-fuse) allows Linux and macOS to mount an S3 bucket via FUSE. s3fs preserves the native object format for files, allowing use of other tools like AWS CLI.
+
+* **Apache NiFi** NiFi was built to automate the flow of data between systems. While the term 'dataflow' is used in a variety of contexts, we use it here to mean the automated and managed flow of information between systems.
 
 ## NOTE
 

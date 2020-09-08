@@ -64,18 +64,18 @@ resource "aws_security_group" "worker" {
 resource "aws_instance" "worker" {
   ami                         = data.aws_ami.worker.id
   iam_instance_profile        = aws_iam_instance_profile.worker.id
-  instance_type               = "t2.micro"
+  instance_type               = "m5.large"
   subnet_id                   = aws_subnet.public_subnet_a.id
   vpc_security_group_ids      = [aws_security_group.worker.id]
   associate_public_ip_address = true
   tags = {
     Name = "${var.vpc_name}-worker"
   }
-  #ebs_block_device {
-  #  device_name = "/dev/sdf"
-  #  volume_size = "100"
-  #  delete_on_termination = true
-  #}
+  ebs_block_device {
+    device_name = "/dev/sdf"
+    volume_size = "100"
+    delete_on_termination = true
+  }
   # Run a remote exec to wait for the server to be ready for SSH.
   connection {
     type        = "ssh"
