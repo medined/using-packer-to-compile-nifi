@@ -7,6 +7,15 @@ resource "aws_vpc" "vpc" {
   }
 }
 
+resource "aws_vpc_endpoint" "s3" {
+  vpc_id       = aws_vpc.vpc.id
+  service_name = "com.amazonaws.${var.region}.s3"
+  tags = {
+    Name = "${var.vpc_name}-s3_endpoint"
+    target_environment = var.target_environment
+  }
+}
+
 resource "aws_subnet" "public_subnet_a" {
   availability_zone = data.aws_availability_zones.available.names[0]
   cidr_block = cidrsubnet(var.vpc_cidr, 8, 1)

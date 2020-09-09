@@ -10,8 +10,14 @@ output "ssh_user" {
 output "worker_instance_id" {
     value = aws_instance.worker.id
 }
-output "worker_public_ip" {
-    value = aws_instance.worker.public_ip
+output "worker_instance" {
+    value = {
+        "ami_id": data.aws_ami.worker.id,
+        "ami_name": data.aws_ami.worker.name,
+        "id": aws_instance.worker.id,
+        "public_ip": aws_instance.worker.public_ip,
+        "vpc_name": var.vpc_name
+    }
 }
 output "vpc_id" {
     value = aws_vpc.vpc.id

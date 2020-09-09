@@ -54,7 +54,7 @@ fi
 echo "If the bucket exists, you will see an Access Denied message."
 aws s3 mb s3://$(cat s3fs-bucket.txt)
 
-PACKER_FILE="centos.json"
+PACKER_FILE="packer-centos.json"
 
 packer validate $PACKER_FILE
 if [ $? != 0 ]; then
@@ -62,7 +62,11 @@ if [ $? != 0 ]; then
     exit
 fi
 
-packer build $PACKER_FILE | tee /tmp/packer.log
+packer build $PACKER_FILE | tee /tmp/$PACKER_FILE.log
 
 unset AWS_ACCESS_KEY_ID
 unset AWS_SECRET_ACCESS_KEY
+
+echo "---------------------------"
+echo "| /tmp/packer.log"
+echo "---------------------------"

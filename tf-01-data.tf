@@ -16,13 +16,21 @@ data "aws_ami" "worker" {
   }
 }
 
-data "aws_availability_zones" "available" {
-    state = "available"
+data "aws_ami" "yum_repository" {
+  most_recent = true
+  owners = ["392160515406"]
+
+  filter {
+      name   = "name"
+      values = ["packer-yum-repository-*"]
+  }
+
+  filter {
+      name   = "virtualization-type"
+      values = ["hvm"]
+  }
 }
 
-output "worker_ami" {
-  value = {
-    "id": data.aws_ami.worker.id,
-    "name": data.aws_ami.worker.name
-  }
+data "aws_availability_zones" "available" {
+    state = "available"
 }

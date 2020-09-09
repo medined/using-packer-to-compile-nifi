@@ -6,6 +6,10 @@
 
 set -x
 
+lsblk
+
+df -h
+
 # ..######...######..##.....##
 # .##....##.##....##.##.....##
 # .##.......##.......##.....##
@@ -30,7 +34,7 @@ sudo chown -R centos /home/centos/.ssh
 
 sudo yum update -y
 sudo yum install -y epel-release
-sudo yum install -y awscli 
+sudo yum install -y awscli
 
 # .##.....##.########.####.##.......####.########.####.########..######.
 # .##.....##....##.....##..##........##.....##.....##..##.......##....##
@@ -93,8 +97,30 @@ echo "s3fs $(cat /tmp/s3fs-bucket.txt) $HOME/data -o nonempty -o iam_role=auto" 
 # .##....##.#########..##...##..#########
 # .##....##.##.....##...##.##...##.....##
 # ..######..##.....##....###....##.....##
+sudo yum install -y java-1.8.0-openjdk java-1.8.0-openjdk-devel
 
-sudo yum install -y maven
+# .##.....##....###....##.....##.########.##....##
+# .###...###...##.##...##.....##.##.......###...##
+# .####.####..##...##..##.....##.##.......####..##
+# .##.###.##.##.....##.##.....##.######...##.##.##
+# .##.....##.#########..##...##..##.......##..####
+# .##.....##.##.....##...##.##...##.......##...###
+# .##.....##.##.....##....###....########.##....##
+
+# Installing maven from yum provides v3.0.5. We want something more recent.
+
+curl -L -o maven.tgz http://mirror.cogentco.com/pub/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz
+tar xfz maven.tgz
+rm maven.tgz
+
+cat <<EOF >>.bashrc
+export JAVA_HOME=/usr/lib/jvm/jre-openjdk
+export M2_HOME=/home/centos/apache-maven-3.6.3
+export MAVEN_HOME=/home/centos/apache-maven-3.6.3
+export PATH=$PATH:/home/centos/apache-maven-3.6.3/bin
+EOF
+
+source .bashrc
 
 # ....###....########.....###.....######..##.....##.########....##....##.####.########.####
 # ...##.##...##.....##...##.##...##....##.##.....##.##..........###...##..##..##........##.
@@ -109,7 +135,5 @@ git config --global core.autocrlf false
 git clone https://gitbox.apache.org/repos/asf/nifi.git
 cd nifi
 git checkout rel/nifi-1.12.0
-mvn -T 2.0C clean install -DskipTests
-# ls -lhd target/nifi*
-
-#/data/projects/using-packer-to-install-nifi/nifi/nifi-assembly
+mvn -T 2.0C clean install -DskipTests | tee /tmp/apache-nifi-build.log
+# ls -lhd /home/centos/nifi/nifi-assembly/target/nifi*

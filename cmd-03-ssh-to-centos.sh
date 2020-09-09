@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PUBLIC_IP=$(terraform output worker_public_ip)
+PUBLIC_IP=$(terraform output -json worker_instance | jq -r '.public_ip')
 PRIVATE_PEM=$(terraform output key_private_file)
 
 # Get the controller's SSH fingerprint.

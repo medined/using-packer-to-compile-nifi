@@ -19,7 +19,7 @@ resource "aws_iam_role" "worker" {
   EOF
 }
 
-resource "aws_iam_role_policy_attachment" "role-policy-attachment" {
+resource "aws_iam_role_policy_attachment" "worker" {
   for_each = toset([
     "arn:aws:iam::aws:policy/AmazonS3FullAccess",
   ])
