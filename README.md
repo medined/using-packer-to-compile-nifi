@@ -1,6 +1,12 @@
 # Using Packer and Terraform To Create AMI With Apache NiFi Installed
 
-Using packer and terraform to install s3fs on an Amazon Image (AMI)
+GOAL: Create an AMI that compiles Apache NiFi and copied the result to S3.
+
+After the `01-build-worker-image.sh` script is completed, you should have the `nifi-1.12.0-bin.tar.gz` file in your S3FS S3 bucket.
+
+Technically, there is no reason to retain the AMI since the goal of this project is to create `nifi-1.12.0-bin.tar.gz` and put it in S3. You might find the technique of using `packer` to accomplish this goal to be somewhat round-a-bout. You would not be wrong, but this technique is easy to understand and definitely controls all variables.
+
+## Technologies Used
 
 * HashiCorp **Packer** (https://www.packer.io/) automates the creation of any type of machine image. It embraces modern configuration management by encouraging you to use automated scripts to install and configure the software within your Packer-made images. Packer brings machine images into the modern age, unlocking untapped potential and opening new opportunities.
 
@@ -51,11 +57,20 @@ EMAIL="john@example.com"
 ssh-keygen -t rsa -C $EMAIL -f ./tf-packer.pem
 ```
 
-### Pick an AWS Region
+### Configure Terraform Variables
+
+Make suer to change the `aws_profile_name` and the `vpc_name`. Check that the `vpc_cidr` value is not already being used.
 
 ```bash
 cat <<EOF > terraform.tfvars
+aws_profile_name = "bluejay"
+key_private_file = "./tf-packer.pem"
 region = "us-east-1"
+ssh_cdir_block = "0.0.0.0/0"
+ssh_user = "centos"
+target_environment = "dev"
+vpc_cidr = "10.1.0.0/16"
+vpc_name = "glox"
 EOF
 ```
 
@@ -72,36 +87,23 @@ EOF
 ## Build the AMI.
 
 ```bash
-./cmd-01-build-image.sh
+./01-build-image.sh
 ```
 
 ## Provision the server.
 
 ```bash
-./cmd-02-provision-server.sh
+./02-provision-server.sh
 ```
 
 ## SSH to server.
 
 ```bash
-./cmd-03-ssh-to-centos.sh
+./03-ssh-to-server.sh
 ```
 
 ## Destroy the server.
 
 ```bash
-./cmd-99-destroy-server.sh
+./99-destroy-server.sh
 ```
-
-## Files
-
-| Name | Description |
-| ---- | ----------- |
-|01-build-image.sh|Using to build the AMI.|
-|02-provision-server.sh|Starts an EC2 instance based on the latest AMI.|
-|03-ssh-to-centos.sh|Connects to the current EC2 instance.|
-|99-destroy-server.sh|Terminates the EC2 instance.|
-|centos.json|The heart of the project. Used by packer to configure the AMI.|
-|main.tf|Used by Terraform to start and configure the EC2 instance.|
-|remote-setup.sh|Copied to the remote server during the AMI build process and executed. Runs as the `centos` user.|
-|variables.tf|Describes variables used by `main.tf`.|

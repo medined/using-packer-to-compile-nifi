@@ -136,4 +136,5 @@ git clone https://gitbox.apache.org/repos/asf/nifi.git
 cd nifi
 git checkout rel/nifi-1.12.0
 mvn -T 2.0C clean install -DskipTests | tee /tmp/apache-nifi-build.log
-# ls -lhd /home/centos/nifi/nifi-assembly/target/nifi*
+
+cp nifi/nifi-assembly/target/nifi-1.12.0-bin.tar.gz /data
